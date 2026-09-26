@@ -1,0 +1,39 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+jobs:
+  build-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - os: macos-latest
+          arch: arm64
+          runner: macos-latest
+          expander_leg: macos-latest--arm64
+    name: build-linux [${{ matrix.expander_leg }}]
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ (matrix.os == 'windows-latest' && matrix.arch == 
+          'arm64') && 'microsoft' || 'temurin' }}
+        java-version: '25'
+        architecture: ${{ matrix.arch == 'arm64' && 'aarch64' || 'x64' }}
+        cache: 'gradle'
+    - name: Build with Gradle
+      shell: bash
+      run: chmod +x gradlew && ./gradlew assemble
+    timeout-minutes: 150
