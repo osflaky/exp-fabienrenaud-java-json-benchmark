@@ -1,0 +1,219 @@
+package com.github.fabienrenaud.jjb.databind;
+
+import com.alibaba.fastjson2.JSON;
+import com.bluelinelabs.logansquare.LoganSquare;
+import com.cedarsoftware.io.JsonIo;
+import com.github.fabienrenaud.jjb.JsonBench;
+import com.github.fabienrenaud.jjb.JsonUtils;
+import com.github.fabienrenaud.jjb.data.JsonSource;
+import io.github.wycst.wast.json.options.WriteOption;
+import okio.BufferedSink;
+import okio.Okio;
+import org.openjdk.jmh.annotations.Benchmark;
+
+import java.io.ByteArrayOutputStream;
+
+public class Serialization extends JsonBench {
+    public JsonSource JSON_SOURCE() {
+        return CLI_JSON_SOURCE;
+    }
+
+    @Benchmark
+    @Override
+    public Object gson() {
+        StringBuilder b = JsonUtils.stringBuilder();
+        JSON_SOURCE().provider().gson().toJson(JSON_SOURCE().nextPojo(), b);
+        return b;
+    }
+
+    @Benchmark
+    @Override
+    public Object jackson() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().jackson().writeValue(baos, JSON_SOURCE().nextPojo());
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object jackson_afterburner() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().jacksonAfterburner().writeValue(baos, JSON_SOURCE().nextPojo());
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object jackson_blackbird() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().jacksonBlackbird().writeValue(baos, JSON_SOURCE().nextPojo());
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object genson() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().genson().serialize(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object yasson() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().yasson().toJson(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object fastjson() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON.writeTo(baos, JSON_SOURCE().nextPojo());
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object fastjson_features() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON.writeTo(baos, JSON_SOURCE().nextPojo(), JSON_SOURCE().fastjsonFeatures().writerContext());
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object flexjson() {
+        StringBuilder b = JsonUtils.stringBuilder();
+        JSON_SOURCE().provider().flexjsonSer().exclude("*.class").deepSerialize(JSON_SOURCE().nextPojo(), b);
+        return b;
+    }
+
+    @Benchmark
+    @Override
+    public Object foryjson() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().foryJson().writeJsonTo(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object boon() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().boon().writeValue(baos, JSON_SOURCE().nextPojo());
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object johnzon() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().johnzon().writeObject(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object jsonsmart() throws Exception {
+        StringBuilder b = JsonUtils.stringBuilder();
+        net.minidev.json.JSONValue.writeJSONString(JSON_SOURCE().nextPojo(), b);
+        return b;
+    }
+
+    @Benchmark
+    @Override
+    public Object dsljson() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().dsljson().serialize(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object dsljson_reflection() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().dsljson_reflection().serialize(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object avajejsonb_jackson() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().avajeJsonb_jackson().toJson(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object avajejsonb() {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().avajeJsonb_default().toJson(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object logansquare() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        LoganSquare.serialize(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object jodd() throws Exception {
+        return JSON_SOURCE().provider().joddSer().serialize(JSON_SOURCE().nextPojo());
+    }
+
+    @Benchmark
+    @Override
+    public Object moshi() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        BufferedSink sink = Okio.buffer(Okio.sink(baos));
+        JSON_SOURCE().provider().moshi().toJson(sink, JSON_SOURCE().nextPojo());
+        sink.flush();
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object qson() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().qson().writeStream(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object quickbuf_json() throws Exception {
+        return JSON_SOURCE().provider().quickbufSink().clear().writeMessage(JSON_SOURCE().nextQuickbufPojo());
+    }
+
+    @Benchmark
+    @Override
+    public Object wast() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        io.github.wycst.wast.json.JSON.writeJsonTo(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object djomo() throws Exception {
+        ByteArrayOutputStream baos = JsonUtils.byteArrayOutputStream();
+        JSON_SOURCE().provider().djomo().write(JSON_SOURCE().nextPojo(), baos);
+        return baos;
+    }
+
+    @Benchmark
+    @Override
+    public Object jsonio() {
+        // standardJson() produces Jackson-compatible JSON: suppresses @type, @id/@ref,
+        // root type info; stringifies non-String map keys; emits ISO-8601 dates.
+        // Cached on the provider to match how Jackson/Gson/etc. cache their mappers.
+        return JsonIo.toJson(JSON_SOURCE().nextPojo(), JSON_SOURCE().provider().jsonioWriteOptions());
+    }
+}
